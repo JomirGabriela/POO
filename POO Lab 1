@@ -1,0 +1,182 @@
+ a)  #include <iostream>
+#include <cstring>
+
+// Definirea structurii pentru produsul software
+struct ProdusSoftware {
+char* denumire;
+char* firma_producere;
+int an_editare;
+int versiune;
+
+// Constructor
+ProdusSoftware(const char* nume, const char* firma, int an, int vers)
+: an_editare(an), versiune(vers) {
+denumire = new char[strlen(nume) + 1];
+firma_producere = new char[strlen(firma) + 1];
+strcpy(denumire, nume);
+strcpy(firma_producere, firma);
+}
+
+// Destructor pentru eliberarea memoriei alocate dinamic
+~ProdusSoftware() {
+delete[] denumire;
+delete[] firma_producere;
+}
+
+// Functie pentru setarea datelor produsului
+void setare(const char* nume, const char* firma, int an, int vers) {
+delete[] denumire;
+delete[] firma_producere;
+denumire = new char[strlen(nume) + 1];
+firma_producere = new char[strlen(firma) + 1];
+strcpy(denumire, nume);
+strcpy(firma_producere, firma);
+an_editare = an;
+versiune = vers;
+}
+
+// Functie pentru compararea a doua produse
+bool compara(const ProdusSoftware& alt) const {
+return (strcmp(denumire, alt.denumire) == 0 &&
+strcmp(firma_producere, alt.firma_producere) == 0 &&
+an_editare == alt.an_editare &&
+versiune == alt.versiune);
+}
+};
+
+int main() {
+int optiune;
+ProdusSoftware produs("Nedenumit", "Nedefinit", 0, 0);
+
+while (true) {
+std::cout << "Meniu:" << std::endl;
+std::cout << "1. Introducere produs software" << std::endl;
+std::cout << "2. Comparare cu produsul curent" << std::endl;
+std::cout << "3. Iesire" << std::endl;
+std::cout << "Alege o optiune: ";
+std::cin >> optiune;
+
+if (optiune == 1) {
+char nume[100];
+char firma[100];
+int an, vers;
+std::cin.ignore(); // Ignoră \n lăsat de std::cin >> optiune
+std::cout << "Introduceti denumirea: ";
+std::cin.getline(nume, 100);
+std::cout << "Introduceti firma de producere: ";
+std::cin.getline(firma, 100);
+std::cout << "Introduceti anul editarii: ";
+std::cin >> an;
+std::cout << "Introduceti versiunea: ";
+std::cin >> vers;
+produs.setare(nume, firma, an, vers);
+} else if (optiune == 2) {
+char nume[100];
+char firma[100];
+int an, vers;
+std::cin.ignore();
+std::cout << "Introduceti denumirea pentru comparare: ";
+std::cin.getline(nume, 100);
+std::cout << "Introduceti firma de producere pentru comparare: ";
+std::cin.getline(firma, 100);
+std::cout << "Introduceti anul editarii pentru comparare: ";
+std::cin >> an;
+std::cout << "Introduceti versiunea pentru comparare: ";
+std::cin >> vers;
+ProdusSoftware produs_cautat(nume, firma, an, vers);
+
+if (produs.compara(produs_cautat)) {
+std::cout << "Produsul software a fost gasit!" << std::endl;
+} else {
+std::cout << "Produsul software nu a fost gasit." << std::endl;
+}
+} else if (optiune == 3) {
+break;
+} else {
+std::cout << "Optiune invalida. Va rugam sa selectati o optiune valida." << std::endl;
+}
+}
+
+return 0;
+}
+
+b)  include <iostream>
+#
+struct Vector {
+    double* vector;
+    int dimensiune;
+
+    Vector(int dim) : dimensiune(dim) {
+        vector = new double[dim];
+    }
+
+    ~Vector() {
+        delete[] vector;
+    }
+
+    void seteazaDimensiune(int dim) {
+        delete[] vector;
+        dimensiune = dim;
+        vector = new double[dim];
+    }
+
+    double& element(int pozitie) {
+        if (pozitie >= 0 && pozitie < dimensiune) {
+            return vector[pozitie];
+        } else {
+            std::cerr << "Eroare: Pozitie invalida!" << std::endl;
+            exit(1);
+        }
+    }
+
+    double sumaElementelorPare() {
+        double suma = 0;
+        for (int i = 0; i < dimensiune; i++) {
+            if (i % 2 == 0) {
+                suma += vector[i];
+            }
+        }
+        return suma;
+    }
+};
+
+int main() {
+    int dimensiune;
+    std::cout << "Introduceti dimensiunea vectorului: ";
+    std::cin >> dimensiune;
+
+    Vector vector(dimensiune);
+
+    while (true) {
+        int optiune;
+        std::cout << "\nMeniu:" << std::endl;
+        std::cout << "1. Seteaza/modifica dimensiunea vectorului" << std::endl;
+        std::cout << "2. Acceseaza/modifica un element al vectorului" << std::endl;
+        std::cout << "3. Calculeaza suma elementelor pare" << std::endl;
+        std::cout << "4. Iesire" << std::endl;
+        std::cout << "Selectati o optiune: ";
+        std::cin >> optiune;
+
+        if (optiune == 1) {
+            int dimensiuneNoua;
+            std::cout << "Introduceti noua dimensiune: ";
+            std::cin >> dimensiuneNoua;
+            vector.seteazaDimensiune(dimensiuneNoua);
+        } else if (optiune == 2) {
+    int pozitie;
+    double nouaValoare;
+    std::cout << "Introduceti pozitia elementului si noua valoare: ";
+    std::cin >> pozitie >> nouaValoare;
+    vector.element(pozitie) = nouaValoare;
+        } else if (optiune == 3) {
+            double sumaPare = vector.sumaElementelorPare();
+            std::cout << "Suma elementelor pare: " << sumaPare << std::endl;
+        } else if (optiune == 4) {
+            break;
+        } else {
+            std::cout << "Optiune invalida. Va rugam sa selectati o optiune valida." << std::endl;
+        }
+    }
+
+    return 0;
+}
