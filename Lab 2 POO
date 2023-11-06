@@ -1,0 +1,407 @@
+//lab 2 POO
+//Program a
+#include <iostream>
+#include <string>
+#include <ctime>
+#include <vector>
+
+class SoftFisier {
+private:
+    std::string numeFisier;
+    std::string anexaAsociere;
+    long marime;
+    time_t dataCreare;
+
+public:
+    // Constructorul implicit
+    SoftFisier() {
+        numeFisier = "";
+        anexaAsociere = "";
+        marime = 0;
+        dataCreare = time(0);
+    }
+
+    // Constructorul cu parametri
+    SoftFisier(std::string nume, std::string anexa, long marimeFisier) {
+        numeFisier = nume;
+        anexaAsociere = anexa;
+        marime = marimeFisier;
+        dataCreare = time(0);
+    }
+
+    // Constructorul de schimbare a tipului cu parametru pentru numele de fișier
+    SoftFisier(const std::string& nume) {
+        numeFisier = nume;
+        anexaAsociere = "";
+        marime = 0;
+        dataCreare = time(0);
+    }
+
+    // Funcție pentru redenumirea fișierului
+    void redenumesteFisier(const std::string& nouNume) {
+        numeFisier = nouNume;
+    }
+
+    // Funcție pentru transferul fișierului în alt directoriu
+    void transferaInDirector(const std::string& directorNou) {
+        // Implementează codul pentru transferul fișierului în noul director
+        // Poți utiliza funcții de sistem de operare sau biblioteci de manipulare a fișierelor pentru asta.
+        std::cout << "Transferul fișierului " << numeFisier << " în directorul " << directorNou << " a fost realizat." << std::endl;
+    }
+
+    // Funcție pentru modificarea anexei de asociere
+    void modificaAnexa(const std::string& nouaAnexa) {
+        anexaAsociere = nouaAnexa;
+    }
+
+    // Funcție pentru afișarea informațiilor despre fișier
+void afiseazaInformatii() const {
+    std::cout << "Nume fișier: " << numeFisier << std::endl;
+    std::cout << "Anexa de asociere: " << anexaAsociere << std::endl;
+    std::cout << "Mărime: " << marime << " bytes" << std::endl;
+    char timpStr[26];
+    ctime_s(timpStr, sizeof(timpStr), &dataCreare); // Pentru platformele Windows
+    timpStr[strcspn(timpStr, "\n")] = 0; // Elimină caracterul newline
+    std::cout << "Data și timpul creării: " << timpStr << std::endl;
+}
+
+
+    // Funcție pentru a obține numele fișierului
+    std::string getNumeFisier() const {
+        return numeFisier;
+    }
+};
+
+int main() {
+    std::vector<SoftFisier> fisiere;
+    int optiune;
+
+    do {
+        std::cout << "===== Meniu =====" << std::endl;
+        std::cout << "1. Creare fisier" << std::endl;
+        std::cout << "2. Redenumire fisier" << std::endl;
+        std::cout << "3. Transfer fisier" << std::endl;
+        std::cout << "4. Modificare anexa" << std::endl;
+        std::cout << "5. Afisare informatii fisier" << std::endl;
+        std::cout << "0. Iesire" << std::endl;
+        std::cout << "Selectati o optiune: ";
+        std::cin >> optiune;
+        std::cin.ignore();
+
+        switch (optiune) {
+            case 1: {
+                std::string nume, anexa;
+                long marime;
+                std::cout << "Introduceti numele fisierului: ";
+                std::getline(std::cin, nume);
+                std::cout << "Introduceti anexa de asociere: ";
+                std::getline(std::cin, anexa);
+                std::cout << "Introduceti marimea fisierului (in bytes): ";
+                std::cin >> marime;
+
+                fisiere.push_back(SoftFisier(nume, anexa, marime));
+                std::cout << "Fisier creat cu succes." << std::endl;
+                break;
+            }
+            case 2: {
+                if (!fisiere.empty()) {
+                    std::string nouNume;
+                    std::string numeFisier;
+                    std::cout << "Introduceti numele fisierului pe care doriti sa-l redenumiti: ";
+                    std::cin.ignore();
+                    std::getline(std::cin, numeFisier);
+                    std::cout << "Introduceti noul nume pentru fisier: ";
+                    std::getline(std::cin, nouNume);
+
+                    for (SoftFisier& fisier : fisiere) {
+                        if (fisier.getNumeFisier() == numeFisier) {
+                            fisier.redenumesteFisier(nouNume);
+                            std::cout << "Fisier redenumit cu succes." << std::endl;
+                            break;
+                        }
+                    }
+                } else {
+                    std::cout << "Nu exista fisiere create." << std::endl;
+                }
+                break;
+            }
+            case 3: {
+                if (!fisiere.empty()) {
+                    std::string directorNou;
+                    std::string numeFisier;
+                    std::cout << "Introduceti numele fisierului pe care doriti sa-l transferati: ";
+                    std::cin.ignore();
+                    std::getline(std::cin, numeFisier);
+                    std::cout << "Introduceti directorul nou pentru transfer: ";
+                    std::getline(std::cin, directorNou);
+
+                    for (SoftFisier& fisier : fisiere) {
+                        if (fisier.getNumeFisier() == numeFisier) {
+                            fisier.transferaInDirector(directorNou);
+                            std::cout << "Fisier transferat cu succes." << std::endl;
+                            break;
+                        }
+                    }
+                } else {
+                    std::cout << "Nu exista fisiere create." << std::endl;
+                }
+                break;
+            }
+            case 4: {
+                if (!fisiere.empty()) {
+                    std::string nouaAnexa;
+                    std::string numeFisier;
+                    std::cout << "Introduceti numele fisierului pe care doriti sa modificati anexa: ";
+                    std::cin.ignore();
+                    std::getline(std::cin, numeFisier);
+                    std::cout << "Introduceti noua anexa: ";
+                    std::getline(std::cin, nouaAnexa);
+
+                    for (SoftFisier& fisier : fisiere) {
+                        if (fisier.getNumeFisier() == numeFisier) {
+                            fisier.modificaAnexa(nouaAnexa);
+                            std::cout << "Anexa modificata cu succes." << std::endl;
+                            break;
+                        }
+                    }
+                } else {
+                    std::cout << "Nu exista fisiere create." << std::endl;
+                }
+                break;
+            }
+            case 5: {
+                if (!fisiere.empty()) {
+                    std::string numeFisier;
+                    std::cout << "Introduceti numele fisierului pentru afisarea informatiilor: ";
+                    std::cin.ignore();
+                    std::getline(std::cin, numeFisier);
+
+                    bool gasit = false;
+                    for (const SoftFisier& fisier : fisiere) {
+                        if (fisier.getNumeFisier() == numeFisier) {
+                            fisier.afiseazaInformatii();
+                            gasit = true;
+                            break;
+                        }
+                    }
+
+                    if (!gasit) {
+                        std::cout << "Fisierul cu numele " << numeFisier << " nu a fost gasit." << std::endl;
+                    }
+                } else {
+                    std::cout << "Nu exista fisiere create." << std::endl;
+                }
+                break;
+            }
+            case 0:
+                std::cout << "Programul se inchide. La revedere!" << std::endl;
+                break;
+            default:
+                std::cout << "Optiune invalida. Va rugam sa selectati o optiune valida." << std::endl;
+        }
+
+    } while (optiune != 0);
+
+    return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Lab 2 POO
+//Program B
+
+#include <iostream>
+#include <vector>
+#include <stdexcept>
+
+class Matrix {
+private:
+    std::vector<std::vector<long>> data;
+    int numRows;
+    int numCols;
+    int errorCode;
+
+public:
+    Matrix();
+    Matrix(int);
+    Matrix(int, int);
+
+    void f_set_matr();
+    void f_show();
+    void f_addition(const Matrix& matrix);
+    void f_subtract(const Matrix& matrix);
+    void f_multipl_matrix(const Matrix& matrix);
+    void f_multipl_num(int value);
+    int getElement(int i, int j) const;
+    void setElement(int i, int j, long value);
+    int getErrorCode() const;
+
+    Matrix& operator=(const Matrix& other);
+};
+
+Matrix::Matrix() : numRows(0), numCols(0), errorCode(0) {}
+
+Matrix::Matrix(int line, int column) : numRows(line), numCols(column), errorCode(0) {
+    data = std::vector<std::vector<long>>(numRows, std::vector<long>(numCols));
+}
+
+// Alte funcții membre ale clasei Matrix rămân neschimbate.
+
+void Matrix::f_set_matr() {
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
+            std::cout << "Matrice[" << i << "][" << j << "] = ";
+            long value;
+            std::cin >> value;
+            data[i][j] = value;
+        }
+    }
+}
+
+void Matrix::f_show() {
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
+            std::cout << "\t" << data[i][j] << "\t";
+        }
+        std::cout << std::endl;
+    }
+}
+
+void Matrix::f_addition(const Matrix& matrix) {
+    if (numRows == matrix.numRows && numCols == matrix.numCols) {
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < numCols; j++) {
+                data[i][j] += matrix.data[i][j];
+            }
+        }
+    } else {
+        errorCode = 2; // Cod de eroare pentru dimensiuni incompatibile
+    }
+}
+
+void Matrix::f_subtract(const Matrix& matrix) {
+    if (numRows == matrix.numRows && numCols == matrix.numCols) {
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < numCols; j++) {
+                data[i][j] -= matrix.data[i][j];
+            }
+        }
+    } else {
+        errorCode = 2; // Cod de eroare pentru dimensiuni incompatibile
+    }
+}
+
+void Matrix::f_multipl_matrix(const Matrix& matrix) {
+    if (numCols == matrix.numRows) {
+        std::vector<std::vector<long>> result(numRows, std::vector<long>(matrix.numCols, 0));
+
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < matrix.numCols; j++) {
+                result[i][j] = 0;
+                for (int k = 0; k < numCols; k++) {
+                    result[i][j] += data[i][k] * matrix.data[k][j];
+                }
+            }
+        }
+
+        data = result;
+        numCols = matrix.numCols;
+    } else {
+        errorCode = 2; // Cod de eroare pentru dimensiuni incompatibile
+    }
+}
+
+void Matrix::f_multipl_num(int value) {
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
+            data[i][j] *= value;
+        }
+    }
+}
+
+int Matrix::getElement(int i, int j) const {
+    if (i >= 0 && i < numRows && j >= 0 && j < numCols) {
+        return data[i][j];
+    } else {
+        return 0;
+    }
+}
+
+void Matrix::setElement(int i, int j, long value) {
+    if (i >= 0 && i < numRows && j >= 0 && j < numCols) {
+        data[i][j] = value;
+    } else {
+        errorCode = 1; // Cod de eroare pentru acces invalid
+    }
+}
+
+int Matrix::getErrorCode() const {
+    return errorCode;
+}
+
+Matrix& Matrix::operator=(const Matrix& other) {
+    if (this == &other) {
+        return *this;
+    }
+
+    numRows = other.numRows;
+    numCols = other.numCols;
+    errorCode = 0;
+    data = other.data;
+
+    return *this;
+}
+
+int main() {
+    int rows, columns;
+
+    std::cout << "Introduceți numărul de rânduri pentru matricea A: ";
+    std::cin >> rows;
+    std::cout << "Introduceți numărul de coloane pentru matricea A: ";
+    std::cin >> columns;
+
+    Matrix matrix1(rows, columns);
+    matrix1.f_set_matr();
+
+    std::cout << "Matricea A:\n";
+    matrix1.f_show();
+
+    std::cout << "Introduceți numărul de rânduri pentru matricea B: ";
+    std::cin >> rows;
+    std::cout << "Introduceți numărul de coloane pentru matricea B: ";
+    std::cin >> columns;
+
+    Matrix matrix2(rows, columns);
+    matrix2.f_set_matr();
+
+    std::cout << "Matricea B:\n";
+    matrix2.f_show();
+
+    int scalar;
+    std::cout << "Introduceți un număr scalar pentru înmulțirea cu matricea A: ";
+    std::cin >> scalar;
+
+    Matrix resultAddition = matrix1;
+    Matrix resultSubtraction = matrix1;
+    Matrix resultMultiplication = matrix1;
+
+    resultAddition.f_addition(matrix2);
+    resultSubtraction.f_subtract(matrix2);
+    resultMultiplication.f_multipl_matrix(matrix2);
+
+    std::cout << "Rezultatul adunării matricelor (A + B):\n";
+    resultAddition.f_show();
+
+    std::cout << "Rezultatul scăderii matricelor (A - B):\n";
+    resultSubtraction.f_show();
+
+    std::cout << "Rezultatul înmulțirii matricelor (A * B):\n";
+    resultMultiplication.f_show();
+
+    Matrix resultScalarMultiplication = matrix1;
+    resultScalarMultiplication.f_multipl_num(scalar);
+
+    std::cout << "Matricea A înmulțită cu scalarul " << scalar << ":\n";
+    resultScalarMultiplication.f_show();
+
+    return 0;
+}
