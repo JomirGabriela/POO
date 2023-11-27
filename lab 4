@@ -1,0 +1,201 @@
+#include <iostream>
+#include <string>
+
+class Transport {
+protected:
+    std::string model;
+    int anFabricatie;
+
+public:
+    // Constructor implicit
+    Transport() : model(""), anFabricatie(0) {}
+
+    // Constructor cu parametri
+    Transport(const std::string& model, int anFabricatie)
+        : model(model), anFabricatie(anFabricatie) {}
+
+    // Constructor de copiere
+    Transport(const Transport& other)
+        : model(other.model), anFabricatie(other.anFabricatie) {}
+
+    // Operator de atribuire
+    Transport& operator=(const Transport& other) {
+        if (this != &other) {
+            model = other.model;
+            anFabricatie = other.anFabricatie;
+        }
+        return *this;
+    }
+
+    // Funcție virtuală pentru afișare
+    virtual void afisare() const {
+        std::cout << "Model: " << model << ", An fabricatie: " << anFabricatie;
+    }
+
+    // Funcție virtuală pentru citire
+    virtual void citire() {
+        std::cout << "Introduceti modelul: ";
+        std::cin >> model;
+        std::cout << "Introduceti anul fabricatiei: ";
+        std::cin >> anFabricatie;
+    }
+
+    // Destructor virtual
+    virtual ~Transport() {}
+};
+
+class TransportAerian : public Transport {
+protected:
+    std::string tip;
+
+public:
+    // Constructor implicit
+    TransportAerian() : tip("") {}
+
+    // Constructor cu parametri
+    TransportAerian(const std::string& model, int anFabricatie, const std::string& tip)
+        : Transport(model, anFabricatie), tip(tip) {}
+
+    // Constructor de copiere
+    TransportAerian(const TransportAerian& other)
+        : Transport(other), tip(other.tip) {}
+
+    // Operator de atribuire
+    TransportAerian& operator=(const TransportAerian& other) {
+        if (this != &other) {
+            Transport::operator=(other);
+            tip = other.tip;
+        }
+        return *this;
+    }
+
+    // Suprascrierea funcției pentru afișare
+    void afisare() const override {
+        Transport::afisare();
+        std::cout << ", Tip: " << tip;
+    }
+
+    // Suprascrierea funcției pentru citire
+    void citire() override {
+        Transport::citire();
+        std::cout << "Introduceti tipul: ";
+        std::cin >> tip;
+    }
+};
+
+class Elicopter : public TransportAerian {
+private:
+    int numarPalete;
+
+public:
+    // Constructor implicit
+    Elicopter() : numarPalete(0) {}
+
+    // Constructor cu parametri
+    Elicopter(const std::string& model, int anFabricatie, const std::string& tip, int numarPalete)
+        : TransportAerian(model, anFabricatie, tip), numarPalete(numarPalete) {}
+
+    // Constructor de copiere
+    Elicopter(const Elicopter& other)
+        : TransportAerian(other), numarPalete(other.numarPalete) {}
+
+    // Operator de atribuire
+    Elicopter& operator=(const Elicopter& other) {
+        if (this != &other) {
+            TransportAerian::operator=(other);
+            numarPalete = other.numarPalete;
+        }
+        return *this;
+    }
+
+    // Suprascrierea funcției pentru afișare
+    void afisare() const override {
+        TransportAerian::afisare();
+        std::cout << ", Numar palete: " << numarPalete;
+    }
+
+    // Suprascrierea funcției pentru citire
+    void citire() override {
+        TransportAerian::citire();
+        std::cout << "Introduceti numarul de palete: ";
+        std::cin >> numarPalete;
+    }
+};
+
+int main() {
+    // Exemplu de utilizare a claselor create
+    Elicopter elicopter1;
+    elicopter1.citire();
+
+    std::cout << "\nInformatii despre elicopter:\n";
+    elicopter1.afisare();
+
+    return 0;
+}
+//////////////////////////////////////////////////////////////////////////////
+#include <iostream>
+#include <vector>
+#include <string>
+
+class ElementChimic {
+private:
+    std::string denumire;
+    std::string proprietatiChimice;
+
+public:
+    // Constructor cu parametri
+    ElementChimic(const std::string& denumire, const std::string& proprietatiChimice)
+        : denumire(denumire), proprietatiChimice(proprietatiChimice) {}
+
+    // Funcție pentru afișare
+    void afisare() const {
+        std::cout << "Element chimic: " << denumire << ", Proprietati chimice: " << proprietatiChimice;
+    }
+};
+
+class Medicamente {
+private:
+    std::vector<ElementChimic> elemente;
+    std::vector<int> cantitati;
+
+public:
+    // Constructor implicit
+    Medicamente() {}
+
+    // Constructor cu parametri pentru adăugarea unui element chimic și a cantității
+    Medicamente(const ElementChimic& element, int cantitate) {
+        adaugaElement(element, cantitate);
+    }
+
+    // Funcție pentru adăugarea unui element chimic și a cantității
+    void adaugaElement(const ElementChimic& element, int cantitate) {
+        elemente.push_back(element);
+        cantitati.push_back(cantitate);
+    }
+
+    // Funcție pentru afișare
+    void afisare() const {
+        std::cout << "Medicamente:\n";
+        for (size_t i = 0; i < elemente.size(); ++i) {
+            std::cout << "  ";
+            elemente[i].afisare();
+            std::cout << ", Cantitate: " << cantitati[i] << "\n";
+        }
+    }
+};
+
+int main() {
+    // Creare elemente chimice
+    ElementChimic element1("Oxigen", "Gaz incolor, inodor");
+    ElementChimic element2("Paracetamol", "Analgezic și antipiretic");
+
+    // Creare medicamente și adăugare elemente
+    Medicamente medicamente;
+    medicamente.adaugaElement(element1, 500);  // 500 unități de oxigen
+    medicamente.adaugaElement(element2, 2);    // 2 unități de paracetamol
+
+    // Afișare informații despre medicamente
+    medicamente.afisare();
+
+    return 0;
+}
