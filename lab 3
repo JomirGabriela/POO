@@ -1,0 +1,245 @@
+Varianta 10
+a
+#include <iostream>
+
+class Bool {
+public:
+    Bool() = default; //constructor
+    Bool(int intValue) : value(intValue != 0) {}
+
+    // Supraincarcarea operatorului "+" pentru SAU logic (funcție prietenă)
+    friend Bool operator+(const Bool& lhs, const Bool& rhs);
+
+    // Supraincarcarea operatorului "*" pentru SI logic (funcție prietenă)
+    friend Bool operator*(const Bool& lhs, const Bool& rhs);
+
+    // Supraincarcarea operatorului "^" pentru SAU EXCLUSIV (funcție prietenă)
+    friend Bool operator^(const Bool& lhs, const Bool& rhs);
+
+    // Metoda pentru supraincarcarea operatorului "==" pentru comparare (metodă membru)
+    bool operator==(const Bool& other) const {
+        return value == other.value;
+    }
+
+    // Metoda pentru supraincarcarea operatorului "!=" pentru comparare (metodă membru)
+    bool operator!=(const Bool& other) const {
+        return value != other.value;
+    }
+    void display() const {
+        std::cout << (value ? "true" : "false") << std::endl;
+    }
+
+private:
+    bool value;
+};
+
+// Definirea operatorului "+" pentru SAU logic (funcție prietenă)
+Bool operator+(const Bool& lhs, const Bool& rhs) {
+    return Bool(lhs.value || rhs.value);
+}
+
+// Definirea operatorului "*" pentru SI logic (funcție prietenă)
+Bool operator*(const Bool& lhs, const Bool& rhs) {
+    return Bool(lhs.value && rhs.value);
+}
+
+// Definirea operatorului "^" pentru SAU EXCLUSIV (funcție prietenă)
+Bool operator^(const Bool& lhs, const Bool& rhs) {
+    return Bool((lhs.value && !rhs.value) || (!lhs.value && rhs.value));
+}
+
+int main() {
+    int num1, num2;
+
+    std::cout << "Introduceti prima cifra (0 sau 1): ";
+    std::cin >> num1;
+
+    std::cout << "Introduceti a doua cifra (0 sau 1): ";
+    std::cin >> num2;
+
+    Bool resultOr = Bool(num1) + Bool(num2);
+    std::cout << "Rezultat SAU logic: ";
+    resultOr.display();
+
+    Bool resultAnd = Bool(num1) * Bool(num2);
+    std::cout << "Rezultat SI logic: ";
+    resultAnd.display();
+
+    Bool resultXor = Bool(num1) ^ Bool(num2);
+    std::cout << "Rezultat SAU EXCLUSIV: ";
+    resultXor.display();
+
+    // Testare operatori de comparare
+    if (Bool(num1) == Bool(num2)) {
+        std::cout << "Cele doua cifre sunt egale." << std::endl;
+    } else {
+        std::cout << "Cele doua cifre sunt diferite." << std::endl;
+    }
+
+    return 0;
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+B
+#include <iostream>
+#include <algorithm> // Pentru std::sort
+
+class Set {
+private:
+    int *elements;
+    int size;
+
+public:
+    // Constructor implicit
+    Set() : elements(nullptr), size(0) {}
+
+    // Constructor cu un parametru (lista de elemente)
+    Set(const int arr[], int n) : size(n) {
+        elements = new int[size];
+        for (int i = 0; i < size; ++i) {
+            elements[i] = arr[i];
+        }
+        // Eliminarea duplicatelor și sortarea elementelor
+        std::sort(elements, elements + size);
+        auto last = std::unique(elements, elements + size);
+        size = std::distance(elements, last);
+    }
+
+    // Destructor
+    ~Set() {
+        delete[] elements;
+    }
+
+    // Metoda pentru verificarea apartenenței unui element
+    bool contains(int element) const {
+        return std::binary_search(elements, elements + size, element);
+    }
+
+    // Metoda pentru adăugarea unui element în mulțime
+    void insert(int element) {
+        if (!contains(element)) {
+            int *newElements = new int[size + 1];
+            std::copy(elements, elements + size, newElements);
+            newElements[size] = element;
+            delete[] elements;
+            elements = newElements;
+            ++size;
+            std::sort(elements, elements + size);
+        }
+    }
+
+    // Metoda pentru uniunea a două mulțimi
+    Set operator+(const Set& other) const {
+        int newSize = size + other.size;
+        int *newElements = new int[newSize];
+        std::merge(elements, elements + size, other.elements, other.elements + other.size, newElements);
+        Set result(newElements, newSize);
+        delete[] newElements;
+        return result;
+    }
+
+    // Metoda pentru intersecția a două mulțimi
+    Set operator*(const Set& other) const {
+        int newSize = std::min(size, other.size);
+        int *newElements = new int[newSize];
+        auto it = std::set_intersection(elements, elements + size, other.elements, other.elements + other.size, newElements);
+        newSize = std::distance(newElements, it);
+        Set result(newElements, newSize);
+        delete[] newElements;
+        return result;
+    }
+
+    // Metoda pentru scăderea a două mulțimi
+    Set operator-(const Set& other) const {
+        int newSize = std::max(size, other.size);
+        int *newElements = new int[newSize];
+        auto it = std::set_difference(elements, elements + size, other.elements, other.elements + other.size, newElements);
+        newSize = std::distance(newElements, it);
+        Set result(newElements, newSize);
+        delete[] newElements;
+        return result;
+    }
+
+    // Operatorul pentru adăugarea unui nou element în mulțime
+    void operator+=(int element) {
+        insert(element);
+    }
+
+    // Operatorul pentru comparare la egalitate
+    bool operator==(const Set& other) const {
+        if (size != other.size) {
+            return false;
+        }
+        for (int i = 0; i < size; ++i) {
+            if (elements[i] != other.elements[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Funcție prietenă pentru afișarea mulțimii
+    friend std::ostream& operator<<(std::ostream& os, const Set& set);
+
+    // Funcție prietenă pentru citirea mulțimii
+    friend std::istream& operator>>(std::istream& is, Set& set);
+};
+
+// Definirea funcției prietene pentru afișarea mulțimii
+std::ostream& operator<<(std::ostream& os, const Set& set) {
+    os << "{ ";
+    for (int i = 0; i < set.size; ++i) {
+        os << set.elements[i];
+        if (i < set.size - 1) {
+            os << ", ";
+        }
+    }
+    os << " }";
+    return os;
+}
+
+
+// Definirea funcției prietene pentru citirea mulțimii
+std::istream& operator>>(std::istream& is, Set& set) {
+    int n;
+    std::cout << "Introduceti dimensiunea multimii: ";
+    is >> n;
+
+    int *arr = new int[n];
+    std::cout << "Introduceti elementele multimii separate prin spatii: ";
+    for (int i = 0; i < n; ++i) {
+        is >> arr[i];
+    }
+
+    set = Set(arr, n);
+    delete[] arr;
+    return is;
+}
+
+int main() {
+    Set set1, set2;
+
+    std::cout << "Introduceti prima multime:\n";
+    std::cin >> set1;
+
+    std::cout << "Introduceti a doua multime:\n";
+    std::cin >> set2;
+
+    std::cout << "Uniunea: " << set1 + set2 << std::endl;
+    std::cout << "Intersectia: " << set1 * set2 << std::endl;
+    std::cout << "Scaderea: " << set1 - set2 << std::endl;
+
+    int newElement;
+    std::cout << "Introduceti un nou element pentru prima multime: ";
+    std::cin >> newElement;
+    set1 += newElement;
+
+    std::cout << "Prima multime dupa adaugare: " << set1 << std::endl;
+
+    if (set1 == set2) {
+        std::cout << "Cele doua multimi sunt egale.\n";
+    } else {
+        std::cout << "Cele doua multimi nu sunt egale.\n";
+    }
+
+    return 0;
+}
